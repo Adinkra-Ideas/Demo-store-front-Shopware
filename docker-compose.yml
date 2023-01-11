@@ -1,0 +1,60 @@
+version: "3"
+
+services:
+  shop:
+    container_name: dockware-demoshop_shop
+    image: dockware/essentials:2.0
+    ports:
+      - "22:22" # ssh
+      - "80:80" # apache2
+      - "443:443" # apache2
+      - "3306:3306" # mysql
+      - "8888:8888" # watch admin
+      - "9998:9998" # watch storefront proxy
+      - "9999:9999" # watch storefront
+    volumes:
+      - .:/var/www/html
+    networks:
+      - web
+    environment:
+      - XDEBUG_ENABLED=1
+      - PHP_VERSION=8.2
+
+  redis:
+    image: redis:6.2.4-alpine
+    container_name: dockware-demoshop_redis
+    networks:
+      - web
+
+  mysql:
+    image: mysql:8.0.34
+    container_name: dockware-demoshop_db
+    networks:
+      - web
+    volumes:
+      - db_volume:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: shopware
+
+  elasticsearch:
+    image: elasticsearch:7.17.13
+    container_name: dockware-demoshop_elasticsearch
+    networks:
+      - web
+    environment:
+      - "EA_JAVA_OPTS=-Xms512m -Xms512m"
+      - discovery.type=single-node
+
+## ***********************************************************************
+##  PERSISTENT DOCKER VOLUMES
+## ***********************************************************************
+volumes:
+  db_volume:
+    driver: local
+
+networks:
+  web:
+    external: false
