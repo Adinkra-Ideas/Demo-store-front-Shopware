@@ -1,6 +1,6 @@
 # Shopware 6 production template
 
-This repository contains the production template that enables you to build,
+This repository contains an example Project demonstrating a production template that enables you to build,
 package and deploy Shopware 6 to production shops.
 
 
